@@ -1,0 +1,31 @@
+﻿@model Tournament
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<dd class="col-sm-2">
+    <b>@Html.DisplayFor(model => model.Title)</b><br />@Html.DisplayFor(model => model.Discipline)
+</dd>
+<dd class="col-sm-10">
+    The tournament will take place on <b>@Html.DisplayFor(model => model.TimeFormatted)</b>
+</dd>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.EntryStatus) entries
+</dd>
+<dd class="col-sm-10">
+    <iframe width="600" height="450" frameborder="0" style="border:0"
+            src="https://www.google.com/maps/embed/v1/search?q=pozna%C5%84&key=AIzaSyCZpJLJ2vyktWVaaDjuS41VpLPnE5s4Eec" allowfullscreen></iframe>
+</dd>
+<dd class="col-sm-10">
+    <table class="table">
+        @foreach (var item in Model.Sponsors)
+        {
+            <tr>
+                <td>
+                    <img src=@item.ImageUrl width="200" />
+                </td>
+            </tr>
+        }
+    </table>
+</dd>

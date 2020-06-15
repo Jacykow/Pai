@@ -29,11 +29,6 @@ namespace Pai.Controllers
             return View();
         }
 
-        public IActionResult Tournaments()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
