@@ -1,49 +1,45 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Pai.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Pai.Areas.Identity.Data;
+using Pai.Models;
 
 namespace Pai.Controllers
 {
+    [Route("Identity/Account")]
     public class AccountController : Controller
     {
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<PaiUser> _userManager;
 
-        public AccountController(SignInManager<IdentityUser> signInManager)
+        public AccountController(
+            UserManager<PaiUser> userManager)
         {
-            this.signInManager = signInManager;
+            _userManager = userManager;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await signInManager.SignOutAsync();
-            return RedirectToAction("index", "home");
-        }
-
-        [HttpGet]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [HttpGet("ConfirmEmail")]
+        public IActionResult ConfirmEmail([FromQuery] string userid,[FromQuery] string code)
         {
-            if (ModelState.IsValid)
+            PaiUser user = _userManager.FindByIdAsync(userid).Result;
+            IdentityResult result = _userManager.
+                        ConfirmEmailAsync(user, code).Result;
+            if (result.Succeeded)
             {
-                var result = await signInManager.PasswordSignInAsync(
-                    model.Email, model.Password, false, false);
-
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("index", "home");
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                ViewBag.Message = "Email confirmed successfully!";
+                return View("Success");
             }
-
-            return View(model);
+            else
+            {
+                ViewBag.Message = "Error while confirming your email!";
+                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
     }
 }

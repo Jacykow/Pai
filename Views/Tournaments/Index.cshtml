@@ -1,22 +1,36 @@
-﻿@model IEnumerable<Pai.Models.Tournament>
+﻿@using Microsoft.AspNetCore.Identity
+@using Pai.Areas.Identity.Data
+@model Pai.Data.PaginatedList<Pai.DatabaseModels.Tournament>
+@inject UserManager<PaiUser> UserManager
 
 @{
     ViewData["Title"] = "Tournaments";
 }
 
-<h2>Index</h2>
+<h2>Tournaments</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by title: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" />
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EntryStatus)
+                Status
+            </th>
+            <th>
+                Time
             </th>
             <th></th>
         </tr>
@@ -26,17 +40,65 @@
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @item.Title
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EntryStatus)
+                @(item.AssignedPlayersAmount + "/" + item.EntryLimit)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                @item.Time.Value
             </td>
+            @{
+                var count = item.TournamentUser.Count;
+                var tu = item.TournamentUser.FirstOrDefault(tournamentUser => UserManager.GetUserId(User) == tournamentUser.UserId);
+                if (tu == default && item.AssignedPlayersAmount == item.EntryLimit)
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                }
+                else if (tu == default && item.AssignedPlayersAmount != item.EntryLimit)
+                {
+                    <td>
+                        <a asp-action="Join" asp-route-id="@item.Id">Join</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                }
+                else if (tu.IsAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Leave" asp-route-id="@item.Id">Leave</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                }
+            }
         </tr>
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
