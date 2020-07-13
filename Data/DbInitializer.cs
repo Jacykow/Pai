@@ -12,7 +12,7 @@ namespace Pai.Data
 
             if (context.Tournament.Count() > 0)
             {
-                //return;
+                return;
             }
 
             context.Tournament.RemoveRange(context.Tournament);

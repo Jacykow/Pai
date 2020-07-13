@@ -254,5 +254,34 @@ namespace Pai.Controllers
                 return RedirectToAction(nameof(Join), new { id = id, saveChangesError = true });
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var tournamentToUpdate = await _context.Tournament.FirstOrDefaultAsync(t => t.Id == id);
+            if (await TryUpdateModelAsync<Tournament>(
+                tournamentToUpdate,
+                "",
+                t => t.Title,
+                t => t.Discipline,
+                t => t.Location,
+                t => t.EntryLimit,
+                t => t.EntryDateLimit))
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
+            }
+            return View(tournamentToUpdate);
+        }
     }
 }

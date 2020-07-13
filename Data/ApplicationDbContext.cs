@@ -25,7 +25,7 @@ namespace Pai.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=tcp:goldenhook.database.windows.net,1433;Initial Catalog=pai;Persist Security Info=False;User ID=goldenUser;Password=g0daDUs#eqe@@eqwdwq;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                optionsBuilder.UseSqlServer("Server=tcp:pai-db.database.windows.net,1433;Initial Catalog=pai-db;Persist Security Info=False;User ID=pai-admin;Password=P4i-password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 

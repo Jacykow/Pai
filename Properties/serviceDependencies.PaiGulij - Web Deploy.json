@@ -1,10 +1,16 @@
 {
   "dependencies": {
-    "mssql1": {
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/Microsoft.Sql/servers/pai-db/databases/pai-db",
-      "type": "mssql.azure",
+    "mssql2": {
+      "type": "mssql",
       "connectionId": "DefaultConnection",
-      "secretStore": "AzureAppSettings"
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "PaiIdentityDbContextConnection",
+      "suggestion": "true",
+      "ignored": "true"
     }
   }
 }
